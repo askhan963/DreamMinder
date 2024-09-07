@@ -14,7 +14,7 @@ export const getGoals = async (req:express.Request,res:express.Response) => {
     }
 }
 export const createGoal = async (req:express.Request,res:express.Response) => {
-    console.log(req.body)
+    // console.log(req.body)
     try {
         const newGoal = await GoalModel.create(req.body)
         if(newGoal){
