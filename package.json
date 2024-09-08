@@ -1,5 +1,5 @@
 {
-  "name": "goalsapp",
+  "name": "DreamMinder",
   "version": "1.0.0",
   "description": "This is the Goal CRUP Operations App.",
   "main": "server.js",
