@@ -67,31 +67,31 @@ export const updateGoal = async (req: CustomRequest, res: express.Response) => {
       res.status(500).json({ message: "Server error" });
     }
   };
-  export const deleteGoal = async (req: CustomRequest, res: express.Response) => {
-    try {
-      // Find the goal by its ID
-      const foundGoal = await GoalModel.findById(req.params.id);
-  
-      if (!foundGoal) {
-        return res.status(404).json({ message: "Goal not found" });
-      }
-  
-      // Check if the user making the request is authorized to delete the goal
-      if (!foundGoal.user || !foundGoal.user.equals(req.user?.id)) {
-        return res.status(403).json({ message: "User not authorized to delete this goal" });
-      }
-  
-      // Delete the goal
-      const deletedGoal = await GoalModel.findByIdAndDelete(req.params.id);
-  
-      if (!deletedGoal) {
-        return res.status(500).json({ message: "Failed to delete the goal" });
-      }
-  
-      // Respond with success and the deleted goal's ID
-      res.status(200).json({ message: "Goal deleted", id: deletedGoal._id });
-    } catch (error) {
-      console.log("Something went wrong...", error);
-      res.status(500).json({ message: "Server error" });
+export const deleteGoal = async (req: CustomRequest, res: express.Response) => {
+  try {
+    // Find the goal by its ID
+    const foundGoal = await GoalModel.findById(req.params.id);
+
+    if (!foundGoal) {
+      return res.status(404).json({ message: "Goal not found" });
     }
-  };
+
+    // Check if the user making the request is authorized to delete the goal
+    if (!foundGoal.user || !foundGoal.user.equals(req.user?.id)) {
+      return res.status(403).json({ message: "User not authorized to delete this goal" });
+    }
+
+    // Delete the goal
+    const deletedGoal = await GoalModel.findByIdAndDelete(req.params.id);
+
+    if (!deletedGoal) {
+      return res.status(500).json({ message: "Failed to delete the goal" });
+    }
+
+    // Respond with success and the deleted goal's ID
+    res.status(200).json({ message: "Goal deleted", id: deletedGoal._id });
+  } catch (error) {
+    console.log("Something went wrong...", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
