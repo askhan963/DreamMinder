@@ -90,7 +90,7 @@
 
 ### API Endpoints
 
-- **POST** `/api/users/register`: Register a new user.
+- **POST** `/api/users`: Register a new user.
 - **POST** `/api/users/login`: Log in a user and receive a JWT token.
 - **GET** `/api/goals`: Get all goals for the authenticated user.
 - **POST** `/api/goals`: Create a new goal (authentication required).
