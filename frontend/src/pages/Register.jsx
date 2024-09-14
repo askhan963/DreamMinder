@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { FaUserPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+
 function Register() {
   const [formData, setFormData] = useState({
     name: "",
@@ -8,7 +12,7 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
-
+  const navigate = useNavigate(); 
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -16,11 +20,49 @@ function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add form validation or submission logic here
-    console.log(formData);
+  
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+  
+    try {
+      const response = await axios.post('http://localhost:5000/api/users', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
+  
+      if (response && response.data) {
+        // Clear form after success
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+
+        // Redirect to /login after a short delay
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+
+        console.log(response.data); // Handle the success response
+      } else {
+        throw new Error("Invalid response from server.");
+      }
+  
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message); // API-specific error message
+      } else {
+        toast.error("Registration failed! Please try again.");
+      }
+    }
   };
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
@@ -111,10 +153,12 @@ function Register() {
             Register
           </button>
           <div className="text-center mt-4 text-gray-600">
-  Already have an account? <Link to='/login' className="text-blue-500 hover:underline font-semibold">Login </Link> here.
-</div>
-
+            Already have an account? <Link to='/login' className="text-blue-500 hover:underline font-semibold">Login </Link> here.
+          </div>
         </form>
+
+        {/* Toast Container for Notifications */}
+        <ToastContainer />
       </div>
     </div>
   );

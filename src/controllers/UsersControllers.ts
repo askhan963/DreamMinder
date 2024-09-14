@@ -13,8 +13,8 @@ export const createUser = async (req:express.Request,res:express.Response) => {
     else{
         const saltValue = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(password,saltValue)
-        console.log("Plain Password: ", password)
-        console.log("Hasheed Password: ", hashedPass)
+        // console.log("Plain Password: ", password)
+        // console.log("Hasheed Password: ", hashedPass)
         const newUser = await userModel.create({name,email,password: hashedPass})
         res.status(201).json({
             id : newUser._id,

@@ -1,23 +1,20 @@
-// authService.js
-import { loginSuccess, logoutSuccess } from './authSlice';
-import axios from 'axios' 
+import axios from 'axios';
 
-export const authService = {
-  async login(userData) {
-    // Replace this with your actual login logic (e.g., API call)
-    const user = await axios.post('API URL')
-    
-    // Dispatch the loginSuccess action with the user data
-    store.dispatch(loginSuccess(user));
-    
-    return user;
-  },
+const API_URL = 'http://localhost:5000/api/users';
 
-  async logout() {
-    // Replace this with your actual logout logic (e.g., clearing tokens)
-    await yourLogoutFunction();
+// Function to handle login API request
+const login = async (email, password) => {
+  const response = await axios.post(`${API_URL}/login`, { email, password });
+  return response.data;
+};
 
-    // Dispatch the logoutSuccess action
-    store.dispatch(logoutSuccess());
-  },
+// Function to handle signup API request
+const signup = async (name, email, password) => {
+  const response = await axios.post(API_URL, { name, email, password });
+  return response.data;
+};
+
+export default {
+  login,
+  signup,
 };
