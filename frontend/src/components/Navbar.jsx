@@ -1,13 +1,52 @@
-import { Link } from "react-router-dom";
-import { FaUser, FaSignInAlt, FaUserPlus, FaBars, FaTimes } from "react-icons/fa";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaUser, FaSignInAlt, FaUserPlus, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import axios from 'axios';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState(""); // To store user email
+  const navigate = useNavigate();
 
   // Toggle the menu open/close
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  // Fetch user data if logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+
+      // Fetch user data
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get('http://localhost:5000/api/users/me', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          if (response && response.data) {
+            setUserEmail(response.data.email); // Set the email
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+
+      fetchUserData();
+    }
+  }, []);
+
+  // Handle Sign Out
+  const handleSignOut = () => {
+    localStorage.removeItem('token');  // Remove token from localStorage
+    setIsLoggedIn(false);              // Update logged-in state
+    setUserEmail("");                  // Clear user email
+    navigate('/login');                // Redirect to login page
   };
 
   return (
@@ -36,18 +75,35 @@ function Navbar() {
             <Link to={'/'} className="hover:text-gray-300">Dashboard</Link>
             <FaUser />
           </li>
-          
-          {/* Login */}
-          <li className="cursor-pointer text-lg flex items-center space-x-2">
-            <Link to={'/login'} className="hover:text-gray-300">Login</Link>
-            <FaSignInAlt />
-          </li>
 
-          {/* Sign Up */}
-          <li className="cursor-pointer text-lg flex items-center space-x-2">
-            <Link to={'/signup'} className="hover:text-gray-300">Sign Up</Link>
-            <FaUserPlus />
-          </li>
+          {isLoggedIn ? (
+            <>
+              {/* User's Email */}
+              <li className="cursor-pointer text-lg flex items-center space-x-2">
+                <span>{userEmail}</span>
+              </li>
+
+              {/* Sign Out */}
+              <li className="cursor-pointer text-lg flex items-center space-x-2">
+                <button onClick={handleSignOut} className="hover:text-gray-300">Sign Out</button>
+                <FaSignOutAlt />
+              </li>
+            </>
+          ) : (
+            <>
+              {/* Login */}
+              <li className="cursor-pointer text-lg flex items-center space-x-2">
+                <Link to={'/login'} className="hover:text-gray-300">Login</Link>
+                <FaSignInAlt />
+              </li>
+
+              {/* Sign Up */}
+              <li className="cursor-pointer text-lg flex items-center space-x-2">
+                <Link to={'/signup'} className="hover:text-gray-300">Sign Up</Link>
+                <FaUserPlus />
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </nav>
