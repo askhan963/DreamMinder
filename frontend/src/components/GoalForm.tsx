@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const GoalForm = ({ addGoal }) => {
+interface GoalFormProps {
+  addGoal: (goal: string) => void; // Define the type for addGoal
+}
+const GoalForm: React.FC<GoalFormProps> = ({ addGoal }) => {
   const [text, setText] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (text.trim() === '') {
       return; // Don't submit empty goal

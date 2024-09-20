@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 
-const GoalItem = ({ goal, deleteGoal, updateGoal }) => {
+interface Goal {
+  _id: string;
+  text: string;
+}
+
+interface GoalItemProps {
+  goal: Goal; // Define the type for goal object
+  deleteGoal: (id: string) => void; // Function to delete goal based on its ID
+  updateGoal: (id: string, newText: string) => void; // Function to update goal based on its ID and new text
+}
+const GoalItem: React.FC<GoalItemProps> = ({ goal, deleteGoal, updateGoal }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newText, setNewText] = useState(goal.text);
 
-  const handleUpdate = (e) => {
+  const handleUpdate = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newText.trim() === '') return;
     updateGoal(goal._id, newText);
