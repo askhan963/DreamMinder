@@ -1,50 +1,74 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import authService from './authService';
 
+interface AuthState {
+  token: string | null;
+  loading: boolean;
+  error: string | null;
+}
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+interface SignupCredentials extends LoginCredentials {
+  name: string;
+}
+
 // Async thunk for login
-export const login = createAsyncThunk('auth/login', async ({ email, password }, thunkAPI) => {
-  try {
-    const { token } = await authService.login(email, password);
+export const login = createAsyncThunk<string, LoginCredentials, { rejectValue: string }>(
+  'auth/login',
+  async ({ email, password }, thunkAPI) => {
+    try {
+      const { token } = await authService.login(email, password);
 
-    // Save token to localStorage (optional for persistence)
-    localStorage.setItem('token', token);
+      // Save token to localStorage (optional for persistence)
+      localStorage.setItem('token', token);
 
-    return token;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message
-    );
+      return token;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      );
+    }
   }
-});
+);
 
 // Async thunk for signup
-export const signup = createAsyncThunk('auth/signup', async ({ name, email, password }, thunkAPI) => {
-  try {
-    const { token } = await authService.signup(name, email, password);
+export const signup = createAsyncThunk<string, SignupCredentials, { rejectValue: string }>(
+  'auth/signup',
+  async ({ name, email, password }, thunkAPI) => {
+    try {
+      const { token } = await authService.signup(name, email, password);
 
-    // Save token to localStorage (optional for persistence)
-    localStorage.setItem('token', token);
+      // Save token to localStorage (optional for persistence)
+      localStorage.setItem('token', token);
 
-    return token;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message
-    );
+      return token;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      );
+    }
   }
-});
+);
+
+// Initial state typed with `AuthState`
+const initialState: AuthState = {
+  token: localStorage.getItem('token'),
+  loading: false,
+  error: null,
+};
 
 // Slice
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    token: localStorage.getItem('token') || null,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     logout: (state) => {
       localStorage.removeItem('token');
@@ -57,25 +81,25 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state, action: PayloadAction<string>) => {
         state.loading = false;
         state.token = action.payload;
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(login.rejected, (state, action: PayloadAction<string | undefined>) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Login failed';
       })
       .addCase(signup.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(signup.fulfilled, (state, action) => {
+      .addCase(signup.fulfilled, (state, action: PayloadAction<string>) => {
         state.loading = false;
         state.token = action.payload;
       })
-      .addCase(signup.rejected, (state, action) => {
+      .addCase(signup.rejected, (state, action: PayloadAction<string | undefined>) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || 'Signup failed';
       });
   },
 });

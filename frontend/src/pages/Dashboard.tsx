@@ -5,10 +5,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import GoalForm from '../components/GoalForm';
 import GoalList from '../components/GoalList';
 
+interface Goal {
+  _id: string;
+  text: string;
+}
+
 function Dashboard() {
-  const [userName, setUserName] = useState(""); // To store user's name
-  const [goals, setGoals] = useState([]); // To store goals
-  const [loading, setLoading] = useState(true); // Loading state
+  const [userName, setUserName] = useState<string>(""); // To store user's name
+  const [goals, setGoals] = useState<Goal[]>([]); // To store goals
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
 
   // Fetch user data and goals on component mount
   useEffect(() => {
@@ -17,7 +22,7 @@ function Dashboard() {
       // Fetch user data
       const fetchUserData = async () => {
         try {
-          const response = await axios.get('http://localhost:5000/api/users/me', {
+          const response = await axios.get<{ name: string }>('http://localhost:5000/api/users/me', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -33,7 +38,7 @@ function Dashboard() {
       // Fetch goals data
       const fetchGoals = async () => {
         try {
-          const response = await axios.get('http://localhost:5000/api/goals', {
+          const response = await axios.get<Goal[]>('http://localhost:5000/api/goals', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -52,10 +57,10 @@ function Dashboard() {
   }, []);
 
   // Add a new goal
-  const addGoal = async (text) => {
+  const addGoal = async (text: string) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.post(
+      const response = await axios.post<Goal>(
         'http://localhost:5000/api/goals',
         { text },
         {
@@ -72,7 +77,7 @@ function Dashboard() {
   };
 
   // Delete a goal
-  const deleteGoal = async (id) => {
+  const deleteGoal = async (id: string) => {
     const token = localStorage.getItem('token');
     try {
       await axios.delete(`http://localhost:5000/api/goals/${id}`, {
@@ -88,10 +93,10 @@ function Dashboard() {
   };
 
   // Update a goal
-  const updateGoal = async (id, newText) => {
+  const updateGoal = async (id: string, newText: string) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.put(
+      const response = await axios.put<Goal>(
         `http://localhost:5000/api/goals/${id}`,
         { text: newText },
         {

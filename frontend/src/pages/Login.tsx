@@ -13,14 +13,14 @@ function Login() {
 
   const navigate = useNavigate();  // Use navigate hook for programmatic navigation
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -44,7 +44,7 @@ function Login() {
         throw new Error("Invalid response from server.");
       }
 
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.data && error.response.data.message) {
         toast.error(error.response.data.message); // API-specific error message
       } else {

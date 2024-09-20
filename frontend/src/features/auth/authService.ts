@@ -23,7 +23,7 @@ const signup = async (name: string, email: string, password: string): Promise<Au
   return response.data;
 };
 
-export default {
+ export default {
   login,
   signup,
 };

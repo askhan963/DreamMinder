@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  React, { useState } from "react";
 import { FaUserPlus } from "react-icons/fa";
 import { Link,useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -13,14 +13,14 @@ function Register() {
     confirmPassword: "",
   });
   const navigate = useNavigate(); 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
     if (formData.password !== formData.confirmPassword) {
@@ -54,7 +54,7 @@ function Register() {
         throw new Error("Invalid response from server.");
       }
   
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.data && error.response.data.message) {
         toast.error(error.response.data.message); // API-specific error message
       } else {
