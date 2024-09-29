@@ -23,7 +23,10 @@ const signup = async (name: string, email: string, password: string): Promise<Au
   return response.data;
 };
 
- export default {
+// Assign the object to a variable before exporting it
+const authService = {
   login,
   signup,
 };
+
+export default authService;
