@@ -4,6 +4,7 @@ import { Link,useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+const API_URL = `${process.env.REACT_APP_API_URL}`;
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ function Register() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    console.log(API_URL)
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -29,7 +31,7 @@ function Register() {
     }
   
     try {
-      const response = await axios.post('http://localhost:5000/api/users', {
+      const response = await axios.post(`${API_URL}/users`, {
         name: formData.name,
         email: formData.email,
         password: formData.password

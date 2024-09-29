@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaSignInAlt, FaUserPlus, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import axios from 'axios';
+const API_URL = `${process.env.REACT_APP_API_URL}`;
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +24,7 @@ function Navbar() {
       // Fetch user data
       const fetchUserData = async () => {
         try {
-          const response = await axios.get('http://localhost:5000/api/users/me', {
+          const response = await axios.get(`${API_URL}/users/me`, {
             headers: {
               Authorization: `Bearer ${token}`
             }

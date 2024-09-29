@@ -4,6 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GoalForm from '../components/GoalForm';
 import GoalList from '../components/GoalList';
+const API_URL = `${process.env.REACT_APP_API_URL}`;
 
 interface Goal {
   _id: string;
@@ -22,7 +23,7 @@ function Dashboard() {
       // Fetch user data
       const fetchUserData = async () => {
         try {
-          const response = await axios.get<{ name: string }>('http://localhost:5000/api/users/me', {
+          const response = await axios.get<{ name: string }>(`${API_URL}/users/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -38,7 +39,7 @@ function Dashboard() {
       // Fetch goals data
       const fetchGoals = async () => {
         try {
-          const response = await axios.get<Goal[]>('http://localhost:5000/api/goals', {
+          const response = await axios.get<Goal[]>(`${API_URL}/goals`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -61,7 +62,7 @@ function Dashboard() {
     const token = localStorage.getItem('token');
     try {
       const response = await axios.post<Goal>(
-        'http://localhost:5000/api/goals',
+        `${API_URL}/goals`,
         { text },
         {
           headers: {
@@ -80,7 +81,7 @@ function Dashboard() {
   const deleteGoal = async (id: string) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:5000/api/goals/${id}`, {
+      await axios.delete(`${API_URL}/goals/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -97,7 +98,7 @@ function Dashboard() {
     const token = localStorage.getItem('token');
     try {
       const response = await axios.put<Goal>(
-        `http://localhost:5000/api/goals/${id}`,
+        `${API_URL}/goals/${id}`,
         { text: newText },
         {
           headers: {

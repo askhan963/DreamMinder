@@ -6,7 +6,6 @@ import './index.css';
 import store from './app/store';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-
 const container = document.getElementById('root');
 
 // Check if container is not null

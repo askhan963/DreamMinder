@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+const API_URL = `${process.env.REACT_APP_API_URL}`;
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', {
+      const response = await axios.post(`${API_URL}/users/login`, {
         email: formData.email,
         password: formData.password
       });
