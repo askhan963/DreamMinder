@@ -1,4 +1,3 @@
-
 ## DreamMinder
 
 **DreamMinder** is a modern goal-setting and productivity app that helps users turn their dreams into actionable goals. With intuitive task management, personalized reminders, progress tracking, and user authentication, DreamMinder keeps users focused on achieving their personal and professional milestones. The app is built using the MERN stack (MongoDB, Express.js, React.js, Node.js) and features secure authentication for a personalized experience.
@@ -22,10 +21,10 @@
 - **Dashboard & Analytics**:
   - Visualize goal progress using charts and statistics.
   - Track completed, pending, and overdue tasks.
-  
+
 - **Collaborative Goal Setting**:
   - Share goals with others and work on them collaboratively.
-  
+
 - **Personalization**:
   - Customizable themes (light/dark mode).
   - Inspirational dashboard with motivational quotes and goal suggestions.
@@ -50,13 +49,17 @@
   - Bcrypt for password encryption
 
 - **Deployment**: 
-  - Deployed using Heroku / AWS
+  - Deployed using Vercel and Netlify
+
+### Acknowledgments
+- **Netlify Deployment**: The frontend of DreamMinder is deployed on [Netlify](https://dreamminder.netlify.app).
+- **Vercel Deployment**: The backend server is deployed using Vercel to provide a seamless serverless experience.
 
 ### Installation
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/askhhan963/DreamMinder.git
+   git clone https://github.com/askhan963/DreamMinder.git
    ```
 2. **Install the dependencies**:
    ```bash
