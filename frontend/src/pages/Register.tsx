@@ -1,10 +1,9 @@
-import  React, { useState } from "react";
+import React, { useState } from "react";
 import { FaUserPlus } from "react-icons/fa";
-import { Link,useNavigate } from "react-router-dom";
-import axios from 'axios';
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
-const API_URL = `${process.env.REACT_APP_API_URL}`;
+import authService from '../features/auth/authService'; // Update this path as per your project structure
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -13,31 +12,29 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
-  const navigate = useNavigate(); 
+
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    console.log(API_URL)
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match!");
       return;
     }
-  
+
     try {
-      const response = await axios.post(`${API_URL}/users`, {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      });
-  
-      if (response && response.data) {
+      // Use authService for signup
+      const response = await authService.signup(formData.name, formData.email, formData.password);
+      
+      if (response) {
         // Clear form after success
         setFormData({
           name: "",
@@ -46,16 +43,16 @@ function Register() {
           confirmPassword: "",
         });
 
+        // Show success toast
+        toast.success("Registration successful! Redirecting to login...");
+
         // Redirect to /login after a short delay
         setTimeout(() => {
           navigate('/login');
         }, 2000);
-
-        console.log(response.data); // Handle the success response
       } else {
         throw new Error("Invalid response from server.");
       }
-  
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.message) {
         toast.error(error.response.data.message); // API-specific error message
@@ -64,15 +61,14 @@ function Register() {
       }
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
-        
+
         {/* Register Heading */}
         <h2 className="flex justify-center space-x-4 items-center text-3xl font-bold text-center mb-6">
-         <span> Register </span>
+          <span> Register </span>
           <FaUserPlus />
         </h2>
 
@@ -80,7 +76,7 @@ function Register() {
         <p className="text-center text-gray-600 mb-6">
           Please fill in the details below to create a new account.
         </p>
-        
+
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name Input */}

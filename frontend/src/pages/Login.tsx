@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { FaSignInAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
-const API_URL = `${process.env.REACT_APP_API_URL}`;
+import authService from '../features/auth/authService'; // Update this path as per your project structure
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -25,16 +24,15 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${API_URL}/users/login`, {
-        email: formData.email,
-        password: formData.password
-      });
+      // Use authService for login
+      const response = await authService.login(formData.email, formData.password);
 
-      if (response && response.data) {
+      if (response) {
         toast.success("Login successful! Redirecting to dashboard...");
 
         // Optionally save token to localStorage or context for later use
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
 
         // Redirect to the dashboard after a short delay
         setTimeout(() => {

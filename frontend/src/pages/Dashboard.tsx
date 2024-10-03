@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GoalForm from '../components/GoalForm';
@@ -15,47 +16,53 @@ function Dashboard() {
   const [userName, setUserName] = useState<string>(""); // To store user's name
   const [goals, setGoals] = useState<Goal[]>([]); // To store goals
   const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const navigate = useNavigate(); // Use navigate hook for programmatic navigation
 
   // Fetch user data and goals on component mount
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      // Fetch user data
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get<{ name: string }>(`${API_URL}/users/me`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response && response.data) {
-            setUserName(response.data.name); // Set the user's name
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      };
 
-      // Fetch goals data
-      const fetchGoals = async () => {
-        try {
-          const response = await axios.get<Goal[]>(`${API_URL}/goals`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setGoals(response.data); // Set the goals data
-          setLoading(false);
-        } catch (error) {
-          toast.error('Error fetching goals');
-          setLoading(false);
-        }
-      };
-
-      fetchUserData();
-      fetchGoals();
+    if (!token) {
+      // If no token is found, redirect to the login page
+      navigate('/login');
+      return;
     }
-  }, []);
+
+    // Fetch user data
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get<{ name: string }>(`${API_URL}/users/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response && response.data) {
+          setUserName(response.data.name); // Set the user's name
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    // Fetch goals data
+    const fetchGoals = async () => {
+      try {
+        const response = await axios.get<Goal[]>(`${API_URL}/goals`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setGoals(response.data); // Set the goals data
+      } catch (error) {
+        toast.error('Error fetching goals');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+    fetchGoals();
+  }, [navigate]);
 
   // Add a new goal
   const addGoal = async (text: string) => {

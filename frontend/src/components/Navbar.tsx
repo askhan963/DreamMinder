@@ -1,37 +1,40 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaUser, FaSignInAlt, FaUserPlus, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
+import {  FaSignInAlt, FaUserPlus, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import axios from 'axios';
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from '../features/auth/authSlice'; // Update the path to match your project structure
+
 const API_URL = `${process.env.REACT_APP_API_URL}`;
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState(""); // To store user email
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Get the auth state from the store
+  const { user, token } = useSelector((state: any) => state.auth);
 
   // Toggle the menu open/close
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  // Fetch user data if logged in
+  // Fetch user data if logged in and update the user email
   useEffect(() => {
-    const token = localStorage.getItem('token');
     if (token) {
-      setIsLoggedIn(true);
-
       // Fetch user data
       const fetchUserData = async () => {
         try {
           const response = await axios.get(`${API_URL}/users/me`, {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           if (response && response.data) {
-            setUserEmail(response.data.email); // Set the email
+            setUserEmail(response.data.email); // Set the user email
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -40,14 +43,13 @@ function Navbar() {
 
       fetchUserData();
     }
-  }, []);
+  }, [token]);
 
   // Handle Sign Out
   const handleSignOut = () => {
-    localStorage.removeItem('token');  // Remove token from localStorage
-    setIsLoggedIn(false);              // Update logged-in state
-    setUserEmail("");                  // Clear user email
-    navigate('/login');                // Redirect to login page
+    dispatch(logout()); // Dispatch the logout action to reset the auth state
+    setUserEmail(""); // Clear user email
+    navigate('/login'); // Redirect to login page
   };
 
   return (
@@ -71,17 +73,13 @@ function Navbar() {
             isOpen ? 'block' : 'hidden'
           } lg:flex space-x-6 text-white absolute lg:static top-16 left-0 w-full lg:w-auto bg-gray-800 lg:bg-transparent p-4 lg:p-0 transition-all duration-300`}
         >
-          {/* Dashboard */}
-          <li className="cursor-pointer text-lg flex items-center space-x-2">
-            <Link to={'/'} className="hover:text-gray-300">Dashboard</Link>
-            <FaUser />
-          </li>
+        
 
-          {isLoggedIn ? (
+          {token ? (
             <>
               {/* User's Email */}
               <li className="cursor-pointer text-lg flex items-center space-x-2">
-                <span>{userEmail}</span>
+                <span>{userEmail || user?.email}</span>
               </li>
 
               {/* Sign Out */}
